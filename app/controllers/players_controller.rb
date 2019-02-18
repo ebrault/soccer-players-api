@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-class PlayersController < ApplicationController
+class PlayersController < ProtectedController
   before_action :set_player, only: %i[show update destroy]
   def index
-    @players = Player.all
+    @players = current_user.players.all
     render json: @players
   end
 
@@ -12,8 +12,7 @@ class PlayersController < ApplicationController
   end
 
   def create
-    @player = Player.new(player_params)
-
+    @player = current_user.players.build(player_params)
     if @player.save
       render json: @player, status: :created
     else
@@ -36,7 +35,7 @@ class PlayersController < ApplicationController
   private
 
   def set_player
-    @player = Player.find(params[:id])
+    @player = current_user.players.find(params[:id])
   end
 
   def player_params
